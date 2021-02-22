@@ -1,10 +1,10 @@
 import java.util.Random;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.lang.Math; 
 
 class Prim {
     //global variables go here
-    LinkedList<Node> remainingNodes;
+    ArrayList<Node> remainingNodes;
     float totalWeight;
 
     class Node {
@@ -63,7 +63,7 @@ class Prim {
         return (float) dist;
     }
 
-    public void printNodes(LinkedList<Node> remainingNodes, int n){
+    public void printNodes(ArrayList<Node> remainingNodes, int n){
         for(int i = 0; i < n; i++){
             if (remainingNodes.get(i) == null){
                 System.out.println(i + " : visited");
@@ -148,7 +148,7 @@ class Prim {
     }
 
     public float prim(int n, int dimensions){
-        remainingNodes = new LinkedList<Node>();
+        remainingNodes = new ArrayList<Node>();
         totalWeight = (float) 0.0;
         Random gen = new Random();
         Node tempNode = new Node(0, 0);
@@ -287,7 +287,7 @@ class randmst {
         // int dim = Integer.parseInt(args[3]);
         // int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
         int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
-        int[] dimArr = {4};
+        int[] dimArr = {1, 2, 3, 4};
         int trials = 5;
         float avg = 0;
         Prim primAlgo = new Prim();
