@@ -100,6 +100,7 @@ class Prim {
 
     public Node deleteMin(int dimensions){
         Node minNode = new Node(0, (float) 2.0);
+        int index = -1;
 
         switch(dimensions){ 
             // initialize minNode so we can enter the while loop - it gets overwritten by deleteMin
@@ -115,10 +116,10 @@ class Prim {
         }
 
         for(int i = 0; i < remainingNodes.size(); i++){
-            if (remainingNodes.get(i) != null){
-                if (minNode.weight > remainingNodes.get(i).weight){
-                    minNode = remainingNodes.get(i); //swap the nodes
-                }
+            // if we remove nodes from remaining nodes, will iterate over less things
+            if (remainingNodes.get(i).weight < minNode.weight){
+                minNode = remainingNodes.get(i); //swap the nodes
+                index = i;
             }
         }
         if(minNode.weight == (float) 2.0){ //remainingNodes is empty - there is no min
@@ -143,14 +144,14 @@ class Prim {
                 break;
         }
 
-        remainingNodes.set(minNode.vertex, null); //delete the min by setting minNode to null
+        remainingNodes.remove(index); //delete the min by setting minNode to null
         return retNode;
     }
 
     public float prim(int n, int dimensions){
         remainingNodes = new LinkedList<Node>();
         totalWeight = (float) 0.0;
-        Random gen = new Random();
+        Random gen = new Random(System.currentTimeMillis());
         Node tempNode = new Node(0, 0);
         float x;
         float y;
@@ -244,33 +245,31 @@ class Prim {
             totalWeight += minNode.weight;
             float edgeWeight = (float) 0.0;
             //generate edges from minNode
-            for(int i = 0; i < n; i++){ //make an edge for each vertex
-                if(remainingNodes.get(i) != null){
-                    switch(dimensions){
-                        case 1:
-                            edgeWeight = gen.nextFloat();
-                            break;
-                        case 2:
-                            edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
-                                                    minNode.y, remainingNodes.get(i).y);
-                            break;
-                        case 3:
-                            edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
-                                                    minNode.y, remainingNodes.get(i).y,
-                                                    minNode.z, remainingNodes.get(i).z
-                                                    );
-                            break;
-                        case 4:
-                            edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
-                                                    minNode.y, remainingNodes.get(i).y,
-                                                    minNode.z, remainingNodes.get(i).z,
-                                                    minNode.w, remainingNodes.get(i).w
-                                                    );
-                            break;  
-                    }
-                    if (edgeWeight < remainingNodes.get(i).weight){
-                        remainingNodes.get(i).weight = edgeWeight;
-                    }
+            for(int i = 0; i < remainingNodes.size(); i++){ //make an edge for each vertex
+                switch(dimensions){
+                    case 1:
+                        edgeWeight = gen.nextFloat();
+                        break;
+                    case 2:
+                        edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
+                                                minNode.y, remainingNodes.get(i).y);
+                        break;
+                    case 3:
+                        edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
+                                                minNode.y, remainingNodes.get(i).y,
+                                                minNode.z, remainingNodes.get(i).z
+                                                );
+                        break;
+                    case 4:
+                        edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
+                                                minNode.y, remainingNodes.get(i).y,
+                                                minNode.z, remainingNodes.get(i).z,
+                                                minNode.w, remainingNodes.get(i).w
+                                                );
+                        break;  
+                }
+                if (edgeWeight < remainingNodes.get(i).weight){
+                    remainingNodes.get(i).weight = edgeWeight;
                 }
             }
             // printNodes(remainingNodes, n); // print the nodes
@@ -285,13 +284,14 @@ class randmst {
         // int n = Integer.parseInt(args[1]);
         // int trials = Integer.parseInt(args[2]);
         // int dim = Integer.parseInt(args[3]);
-        // int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
         int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
-        int[] dimArr = {4};
+        // int[] numVerts = {128, 256, 512, 1024};
+        int[] dimArr = {1, 2, 3, 4};
         int trials = 5;
         float avg = 0;
         Prim primAlgo = new Prim();
-
+        // Takes over 30mins to get 2nd trial info for dim = 1, n = 8192
+        // Down to 11mins after updates to LL
         for(int dim : dimArr){
             for(int n : numVerts){
                 avg = (float) 0.0;
