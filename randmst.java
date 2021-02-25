@@ -151,6 +151,7 @@ class Prim {
         remainingNodes = new ArrayList<Node>();
         totalWeight = (float) 0.0;
         Random gen = new Random();
+        gen.setSeed(gen.nextLong());
         Node tempNode = new Node(0, 0);
         float x;
         float y;
@@ -160,7 +161,7 @@ class Prim {
         for (int i = 0; i < n; i++){
             if (i == 0){
                 switch(dimensions){
-                    case 1:
+                    case 0:
                         remainingNodes.add(new Node(i, 0));
                         break;
                     case 2:
@@ -182,7 +183,7 @@ class Prim {
             }
             else{
                 switch(dimensions){
-                    case 1:
+                    case 0:
                         remainingNodes.add(new Node(i, (float) 2.0)); // 2.0 is bigger than any edge
                         break;
                     case 2:
@@ -205,6 +206,7 @@ class Prim {
                         break;
                 }
             }
+            gen.setSeed(gen.nextLong());
         }
 
         Node minNode = new Node(0, (float) 2.0);
@@ -247,8 +249,9 @@ class Prim {
             for(int i = 0; i < n; i++){ //make an edge for each vertex
                 if(remainingNodes.get(i) != null){
                     switch(dimensions){
-                        case 1:
+                        case 0:
                             edgeWeight = gen.nextFloat();
+                            gen.setSeed(gen.nextLong() + i);
                             break;
                         case 2:
                             edgeWeight = euclidDist(minNode.x, remainingNodes.get(i).x, 
@@ -282,29 +285,38 @@ class Prim {
 
 class randmst {
     public static void main(String[] args){
-        // int n = Integer.parseInt(args[1]);
-        // int trials = Integer.parseInt(args[2]);
-        // int dim = Integer.parseInt(args[3]);
-        // int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
-        int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
-        int[] dimArr = {1, 2, 3, 4};
-        int trials = 5;
+        //./randmst 0 numpoints numtrials dimension
+        // flag not used
+        int flag = Integer.parseInt(args[0]);
+        int n = Integer.parseInt(args[1]);
+        int trials = Integer.parseInt(args[2]);
+        int dim = Integer.parseInt(args[3]);
+        // int[] numVerts = {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288};
+        // int[] dimArr = {0, 2, 3, 4};
+        // int trials = 4;
         float avg = 0;
         Prim primAlgo = new Prim();
 
-        for(int dim : dimArr){
-            for(int n : numVerts){
-                avg = (float) 0.0;
-                for(int i = 0; i < trials; i++){
-                    float weight = primAlgo.prim(n, dim);
-                    System.out.println("Total weight of MST: " + weight);
-                    avg += weight / trials;
-                }
-                System.out.println("Avg weight for " + n + " vertices, " + trials + " trials, " + dim + " dimensions = " + avg);
-                System.out.println();
-            }
+        avg = (float) 0.0;
+        for(int i = 0; i < trials; i++){
+            float weight = primAlgo.prim(n, dim);
+            System.out.println("Total weight of MST: " + weight);
+            avg += weight / trials;
         }
+        System.out.println("Avg weight for " + n + " vertices, " + trials + " trials, " + dim + " dimensions = " + avg);
+        System.out.println();
+        
+        // for(int dim : dimArr){
+        //     for(int n : numVerts){
+        //         avg = (float) 0.0;
+        //         for(int i = 0; i < trials; i++){
+        //             float weight = primAlgo.prim(n, dim);
+        //             System.out.println("Total weight of MST: " + weight);
+        //             avg += weight / trials;
+        //         }
+        //         System.out.println("Avg weight for " + n + " vertices, " + trials + " trials, " + dim + " dimensions = " + avg);
+        //         System.out.println();
+        //     }
+        // }
     }
 }
-
-//./randmst 0 numpoints numtrials dimension
